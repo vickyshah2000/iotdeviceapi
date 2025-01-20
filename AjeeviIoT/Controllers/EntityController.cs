@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MySqlConnector;
 using Pomelo.EntityFrameworkCore.MySql;
+using System.Data.Entity.Core.Common;
+using System.Runtime.Intrinsics.Arm;
 using System.Security.Principal;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -211,7 +213,6 @@ namespace AjeeviIoT.Controllers
                         }
                         else
                         {
-                            // If no images provided, delete the old ones (if any)
                             var existingImages = await _ferrodbContext.Imagedetails
                                 .Where(i => i.UniqueId == existingEntity.Id.ToString())
                                 .ToListAsync();
@@ -220,12 +221,10 @@ namespace AjeeviIoT.Controllers
 
                         await _ferrodbContext.SaveChangesAsync();
 
-                        // Commit the transaction
                         await transaction.CommitAsync();
                     }
                     catch (Exception)
                     {
-                        // Rollback if an error occurs
                         await transaction.RollbackAsync();
                         throw;
                     }
@@ -664,7 +663,9 @@ namespace AjeeviIoT.Controllers
                 Email = createPersonDTO.Email,
                 Contacttype = createPersonDTO.Contacttype,
                 Alternatenumber = createPersonDTO.Alternatenumber,
-                Remarks = createPersonDTO.Remarks
+                Remarks = createPersonDTO.Remarks,
+                DepartmentId = createPersonDTO.DepartmentId,
+                DesignationId = createPersonDTO.DesignationId
             };
 
             _ferrodbContext.People.Add(person);
@@ -731,7 +732,9 @@ namespace AjeeviIoT.Controllers
                     person.Contacttype,
                     person.Alternatenumber,
                     person.Remarks,
-                    Images = imageUrls
+                    Images = imageUrls,
+                    person.DesignationId,
+                    person.DepartmentId
                 },
                 AddressContact = new
                 {
@@ -760,12 +763,16 @@ namespace AjeeviIoT.Controllers
                                                 select img)
                                            on p.Id.ToString() equals imd.UniqueId into imdGroup
                                            from imd in imdGroup.DefaultIfEmpty()
-                                           where p.Id == personId // Filter by PersonId
+                                           join d in _ferrodbContext.Departments on p.DepartmentId equals d.DId into dGroup  // left join use
+                                           from d in dGroup.DefaultIfEmpty()
+                                           join des in _ferrodbContext.Designations on p.DesignationId equals des.DsId into desGroup
+                                           from des in desGroup.DefaultIfEmpty()
+                                           where p.Id == personId
                                            select new
                                            {
                                                AddressContactId = ac.Id,
                                                AddressId = ac.Addressid,
-                                               PersonId = p.Id, // PersonId fetched
+                                               PersonId = p.Id,
                                                FirstName = p.Firstname,
                                                LastName = p.Lastname,
                                                MobileNumber = p.Mobilenumber,
@@ -773,6 +780,10 @@ namespace AjeeviIoT.Controllers
                                                AlternateNumber = p.Alternatenumber,
                                                ContactType = p.Contacttype,
                                                ImageUrl = imd.Imageurl,
+                                               DepartmentId = p.DepartmentId,
+                                               DepartmentName = d.DName,
+                                               DesignationId = p.DesignationId,
+                                               DesignationName = des.DsName,
                                                Remarks = p.Remarks
                                            })
                                            .FirstOrDefaultAsync();
@@ -816,6 +827,12 @@ namespace AjeeviIoT.Controllers
                                                      select img)
                                                 on p.Id.ToString() equals imd.UniqueId into imdGroup
                                                 from imd in imdGroup.DefaultIfEmpty()
+                                                join d in _ferrodbContext.Departments on p.DepartmentId equals d.DId into dGroup  // left join use
+                                                from d in dGroup.DefaultIfEmpty()
+                                                join des in _ferrodbContext.Designations on p.DesignationId equals des.DsId into desGroup
+                                                from des in desGroup.DefaultIfEmpty()
+                                                    //join d in _ferrodbContext.Departments on p.DepartmentId equals d.DId
+                                                    //join des in _ferrodbContext.Designations on p.DesignationId equals des.DsId
                                                 orderby p.Id descending
                                                 select new
                                                 {
@@ -829,7 +846,11 @@ namespace AjeeviIoT.Controllers
                                                     AlternateNumber = p.Alternatenumber,
                                                     ContactType = p.Contacttype,
                                                     ImageUrl = imd.Imageurl,
-                                                    Remarks = p.Remarks
+                                                    Remarks = p.Remarks,
+                                                    DepartmentId = p.DepartmentId,
+                                                    DepartmentName = d.DName,
+                                                    DesignationId = p.DesignationId,
+                                                    DesignationName = des.DsName
                                                     //Image = imd.Imageurl
                                                 })
                                                 .Skip((pageNumber - 1) * pageSize)
@@ -934,6 +955,10 @@ namespace AjeeviIoT.Controllers
                                                 join ct in _ferrodbContext.Contacttypes
                                                 on p.Contacttype equals ct.ContactTypeId into ctGroup
                                                 from ct in ctGroup.DefaultIfEmpty()
+                                                join d in _ferrodbContext.Departments on p.DepartmentId equals d.DId into dGroup   //left join use
+                                                from d in dGroup.DefaultIfEmpty()
+                                                join des in _ferrodbContext.Designations on p.DesignationId equals des.DsId into desGroup
+                                                from des in desGroup.DefaultIfEmpty()
                                                 orderby ac.Id descending
                                                 select new
                                                 {
@@ -948,6 +973,10 @@ namespace AjeeviIoT.Controllers
                                                     ContactTypeId = ct != null ? ct.ContactTypeId : (int?)null,
                                                     ContactTypeName = ct != null ? ct.Contacttypename : null,
                                                     ImageUrl = imd != null ? imd.Imageurl : null,
+                                                    DepartmentId = p.DepartmentId,
+                                                    DepartmentName = d.DName,
+                                                    DesignationId = p.DesignationId,
+                                                    DesignationName = des.DsName,
                                                     Remarks = p.Remarks
                                                 })
                                                 .ToListAsync();
@@ -991,6 +1020,8 @@ namespace AjeeviIoT.Controllers
                 person.Contacttype = updatePersonDTO.Contacttype;
                 person.Alternatenumber = updatePersonDTO.Alternatenumber;
                 person.Remarks = updatePersonDTO.Remarks;
+                person.DepartmentId = updatePersonDTO.DepartmentId;
+                person.DesignationId = updatePersonDTO.DesignationId;
 
                 _ferrodbContext.People.Update(person);
                 await _ferrodbContext.SaveChangesAsync();
@@ -1070,6 +1101,8 @@ namespace AjeeviIoT.Controllers
                         person.Email,
                         person.Contacttype,
                         person.Alternatenumber,
+                        person.DepartmentId,
+                        person.DesignationId,
                         person.Remarks
                     }
                 });

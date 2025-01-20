@@ -18,5 +18,7 @@ namespace AjeeviIoT.EntitiesDTO
         public int? Contacttype { get; set; }
         public string? Alternatenumber { get; set; } 
         public string? Remarks { get; set; }
+        public int? DepartmentId { get; set; }
+        public int? DesignationId { get; set; }
     }
 }

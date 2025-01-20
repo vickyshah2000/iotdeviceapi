@@ -19,5 +19,7 @@ namespace AjeeviIoT.EntitiesDTO
         public string? Alternatenumber { get; set; }
         public string? Remarks { get; set; }
         public List<IFormFile>? Images { get; set; }
+        public int? DepartmentId { get; set; }
+        public int? DesignationId { get; set; }
     }
 }

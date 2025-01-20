@@ -41,6 +41,10 @@ public partial class ferrodbContext : DbContext
 
     public virtual DbSet<Country> Countries { get; set; }
 
+    public virtual DbSet<Department> Departments { get; set; }
+
+    public virtual DbSet<Designation> Designations { get; set; }
+
     public virtual DbSet<Device> Devices { get; set; }
 
     public virtual DbSet<DeviceAssign> DeviceAssigns { get; set; }
@@ -53,8 +57,6 @@ public partial class ferrodbContext : DbContext
 
     public virtual DbSet<Deviceinstallation> Deviceinstallations { get; set; }
 
-    public virtual DbSet<Devicetype> Devicetypes { get; set; }
-
     public virtual DbSet<DjangoAdminLog> DjangoAdminLogs { get; set; }
 
     public virtual DbSet<DjangoContentType> DjangoContentTypes { get; set; }
@@ -62,6 +64,8 @@ public partial class ferrodbContext : DbContext
     public virtual DbSet<DjangoMigration> DjangoMigrations { get; set; }
 
     public virtual DbSet<DjangoSession> DjangoSessions { get; set; }
+
+    public virtual DbSet<Employeedevice> Employeedevices { get; set; }
 
     public virtual DbSet<Entity> Entities { get; set; }
 
@@ -422,6 +426,30 @@ public partial class ferrodbContext : DbContext
                 .HasColumnName("name");
         });
 
+        modelBuilder.Entity<Department>(entity =>
+        {
+            entity.HasKey(e => e.DId).HasName("PRIMARY");
+
+            entity.ToTable("department");
+
+            entity.Property(e => e.DId).HasColumnName("D_Id");
+            entity.Property(e => e.DName)
+                .HasMaxLength(50)
+                .HasColumnName("D_Name");
+        });
+
+        modelBuilder.Entity<Designation>(entity =>
+        {
+            entity.HasKey(e => e.DsId).HasName("PRIMARY");
+
+            entity.ToTable("designation");
+
+            entity.Property(e => e.DsId).HasColumnName("Ds_Id");
+            entity.Property(e => e.DsName)
+                .HasMaxLength(50)
+                .HasColumnName("Ds_name");
+        });
+
         modelBuilder.Entity<Device>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
@@ -531,106 +559,6 @@ public partial class ferrodbContext : DbContext
             entity.Property(e => e.Status).HasColumnType("enum('Active','Inactive')");
         });
 
-        modelBuilder.Entity<Devicetype>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PRIMARY");
-
-            entity.ToTable("devicetype");
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.ActiveModeAvg)
-                .HasMaxLength(10)
-                .HasColumnName("active_mode_avg");
-            entity.Property(e => e.ActiveModePeak)
-                .HasMaxLength(10)
-                .HasColumnName("active_mode_peak");
-            entity.Property(e => e.AnalogInput)
-                .HasMaxLength(45)
-                .HasColumnName("Analog Input");
-            entity.Property(e => e.Antenna)
-                .HasMaxLength(20)
-                .HasColumnName("antenna");
-            entity.Property(e => e.Band2g)
-                .HasMaxLength(45)
-                .HasColumnName("Band_2G");
-            entity.Property(e => e.BatteryBackup)
-                .HasMaxLength(10)
-                .HasColumnName("battery_backup");
-            entity.Property(e => e.BatteryMah)
-                .HasMaxLength(100)
-                .HasColumnName("Battery_mah");
-            entity.Property(e => e.Bluetooth)
-                .HasMaxLength(20)
-                .HasColumnName("bluetooth");
-            entity.Property(e => e.Certificates)
-                .HasMaxLength(45)
-                .HasColumnName("certificates");
-            entity.Property(e => e.ColdStart)
-                .HasMaxLength(10)
-                .HasColumnName("cold_start");
-            entity.Property(e => e.CommProtocol).HasMaxLength(45);
-            entity.Property(e => e.Datacoding).HasMaxLength(45);
-            entity.Property(e => e.DeviceLife)
-                .HasPrecision(10)
-                .HasColumnName("device_life");
-            entity.Property(e => e.DigitalInput)
-                .HasMaxLength(45)
-                .HasColumnName("Digital Input");
-            entity.Property(e => e.DigitalOutput)
-                .HasMaxLength(45)
-                .HasColumnName("Digital output");
-            entity.Property(e => e.Firmwareupdate).HasMaxLength(45);
-            entity.Property(e => e.GpsAccuracy)
-                .HasPrecision(5, 2)
-                .HasColumnName("GPS_accuracy");
-            entity.Property(e => e.GpsReciver)
-                .HasMaxLength(10)
-                .HasColumnName("GPS_reciver");
-            entity.Property(e => e.HotStart)
-                .HasMaxLength(10)
-                .HasColumnName("hot_start");
-            entity.Property(e => e.HumidityLevel)
-                .HasMaxLength(10)
-                .HasColumnName("humidity_level");
-            entity.Property(e => e.Memory).HasMaxLength(45);
-            entity.Property(e => e.Model).HasMaxLength(100);
-            entity.Property(e => e.OpreatingTemp)
-                .HasMaxLength(10)
-                .HasColumnName("opreating_temp");
-            entity.Property(e => e.OpreatingVoltage)
-                .HasMaxLength(10)
-                .HasColumnName("opreating_voltage");
-            entity.Property(e => e.PositionAccuracy)
-                .HasMaxLength(20)
-                .HasColumnName("position_accuracy");
-            entity.Property(e => e.Protocol)
-                .HasMaxLength(20)
-                .HasColumnName("protocol");
-            entity.Property(e => e.PrtectionRating)
-                .HasPrecision(5, 2)
-                .HasColumnName("prtection_rating");
-            entity.Property(e => e.RfPower)
-                .HasMaxLength(200)
-                .HasColumnName("rfPower");
-            entity.Property(e => e.SendingFerq)
-                .HasPrecision(5, 2)
-                .HasColumnName("sending_ferq");
-            entity.Property(e => e.Sensitivity)
-                .HasMaxLength(10)
-                .HasColumnName("sensitivity");
-            entity.Property(e => e.SleepMode)
-                .HasMaxLength(10)
-                .HasColumnName("sleep_mode");
-            entity.Property(e => e.Sms).HasMaxLength(45);
-            entity.Property(e => e.Sos).HasMaxLength(45);
-            entity.Property(e => e.UsbPort)
-                .HasMaxLength(10)
-                .HasColumnName("usb_port");
-            entity.Property(e => e.WarmStart)
-                .HasMaxLength(10)
-                .HasColumnName("warm_start");
-        });
-
         modelBuilder.Entity<DjangoAdminLog>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
@@ -723,6 +651,21 @@ public partial class ferrodbContext : DbContext
             entity.Property(e => e.SessionData)
                 .IsRequired()
                 .HasColumnName("session_data");
+        });
+
+        modelBuilder.Entity<Employeedevice>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("employeedevice");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Assigntime)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Status)
+                .HasColumnType("bit(1)")
+                .HasColumnName("status");
         });
 
         modelBuilder.Entity<Entity>(entity =>
@@ -1027,6 +970,8 @@ public partial class ferrodbContext : DbContext
                 .HasMaxLength(45)
                 .HasColumnName("alternatenumber");
             entity.Property(e => e.Contacttype).HasColumnName("contacttype");
+            entity.Property(e => e.DepartmentId).HasColumnName("departmentId");
+            entity.Property(e => e.DesignationId).HasColumnName("designationId");
             entity.Property(e => e.Email)
                 .HasMaxLength(45)
                 .HasColumnName("email");

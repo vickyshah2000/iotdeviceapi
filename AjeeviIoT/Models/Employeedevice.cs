@@ -5,14 +5,15 @@ using System.Collections.Generic;
 
 namespace AjeeviIoT.Models;
 
-public partial class Entityaddress
+public partial class Employeedevice
 {
     public int Id { get; set; }
 
-    public int? Entityid { get; set; }
+    public int? PersonId { get; set; }
 
-    public int? Addressid { get; set; }
+    public int? DeviceId { get; set; }
 
-    public int? Addresstype { get; set; }
-    public virtual Address Address { get; set; }
+    public DateTime? Assigntime { get; set; }
+
+    public ulong? Status { get; set; }
 }

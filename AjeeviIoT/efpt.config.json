@@ -71,6 +71,14 @@
          "ObjectType": 0
       },
       {
+         "Name": "department",
+         "ObjectType": 0
+      },
+      {
+         "Name": "designation",
+         "ObjectType": 0
+      },
+      {
          "Name": "device",
          "ObjectType": 0
       },
@@ -95,10 +103,6 @@
          "ObjectType": 0
       },
       {
-         "Name": "devicetype",
-         "ObjectType": 0
-      },
-      {
          "Name": "django_admin_log",
          "ObjectType": 0
       },
@@ -112,6 +116,10 @@
       },
       {
          "Name": "django_session",
+         "ObjectType": 0
+      },
+      {
+         "Name": "employeedevice",
          "ObjectType": 0
       },
       {
