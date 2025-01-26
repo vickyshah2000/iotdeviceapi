@@ -5,11 +5,13 @@ using System.Collections.Generic;
 
 namespace AjeeviIoT.Models;
 
-public partial class Rdlocation
+public partial class Organisationaddress
 {
     public int Id { get; set; }
 
-    public int? RdId { get; set; }
+    public int? OrgId { get; set; }
 
-    public int? Locationid { get; set; }
+    public int? AddressId { get; set; }
+
+    public int? Addresstype { get; set; }
 }

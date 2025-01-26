@@ -139,18 +139,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.Use(async (context, next) =>
-{
-    context.Response.GetTypedHeaders().CacheControl = new Microsoft.Net.Http.Headers.CacheControlHeaderValue
-    {
-        Public = true,
-        MaxAge = TimeSpan.FromMinutes(10) // Set cache expiration time
-    };
-    context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Vary] =
-        new[] { "Accept-Encoding" };
 
-    await next();
-});
 
 app.UseCors("AllowAll");
 

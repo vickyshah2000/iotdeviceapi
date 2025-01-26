@@ -98,7 +98,6 @@ namespace AjeeviIoT.Controllers
                     RoleType = userRole.RoleType
                 };
 
-                // Ensure the method name matches
                 return Ok(response);
             }
             catch (Exception ex)

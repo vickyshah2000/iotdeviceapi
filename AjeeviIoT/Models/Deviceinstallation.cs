@@ -30,4 +30,6 @@ public partial class Deviceinstallation
     public decimal? MaxValue { get; set; }
 
     public decimal? MaxSever { get; set; }
+
+    public int? OrgId { get; set; }
 }

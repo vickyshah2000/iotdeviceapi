@@ -59,7 +59,11 @@ namespace AjeeviIoT.Controllers
                 {
                     id = rData.UserId,
                     user_name = rData.UserFname,
-                    entity_id = rData.EntityId
+                    entity_id = rData.EntityId,
+                    //deviceTypeId = new
+                    //{
+                        //totalDeviceTypeId = _ferrodbContext.Deviceinstallations.Where(d => d.EntityId)
+                    //}
                 }
             });
 

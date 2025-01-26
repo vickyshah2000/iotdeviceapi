@@ -14,5 +14,6 @@ public partial class Entityaddress
     public int? Addressid { get; set; }
 
     public int? Addresstype { get; set; }
+
     public virtual Address Address { get; set; }
 }

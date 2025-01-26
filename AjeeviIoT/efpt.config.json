@@ -171,11 +171,15 @@
          "ObjectType": 0
       },
       {
-         "Name": "person",
+         "Name": "organisation",
          "ObjectType": 0
       },
       {
-         "Name": "rdlocations",
+         "Name": "organisationaddress",
+         "ObjectType": 0
+      },
+      {
+         "Name": "person",
          "ObjectType": 0
       },
       {
@@ -211,7 +215,11 @@
          "ObjectType": 0
       },
       {
-         "Name": "entityaddressview",
+         "Name": "vw_totaldevice",
+         "ObjectType": 3
+      },
+      {
+         "Name": "vw_totaldevice2",
          "ObjectType": 3
       }
    ],

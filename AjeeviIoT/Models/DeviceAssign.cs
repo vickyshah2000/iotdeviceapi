@@ -20,4 +20,6 @@ public partial class DeviceAssign
     public int? EntityId { get; set; }
 
     public string Remarks { get; set; }
+
+    public int? OrgId { get; set; }
 }

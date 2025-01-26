@@ -71,8 +71,6 @@ public partial class ferrodbContext : DbContext
 
     public virtual DbSet<Entityaddress> Entityaddresses { get; set; }
 
-    public virtual DbSet<Entityaddressview> Entityaddressviews { get; set; }
-
     public virtual DbSet<Entityrelationship> Entityrelationships { get; set; }
 
     public virtual DbSet<Entityrole> Entityroles { get; set; }
@@ -93,9 +91,11 @@ public partial class ferrodbContext : DbContext
 
     public virtual DbSet<MasterDeviceType> MasterDeviceTypes { get; set; }
 
-    public virtual DbSet<Person> People { get; set; }
+    public virtual DbSet<Organisation> Organisations { get; set; }
 
-    public virtual DbSet<Rdlocation> Rdlocations { get; set; }
+    public virtual DbSet<Organisationaddress> Organisationaddresses { get; set; }
+
+    public virtual DbSet<Person> People { get; set; }
 
     public virtual DbSet<Region> Regions { get; set; }
 
@@ -108,6 +108,10 @@ public partial class ferrodbContext : DbContext
     public virtual DbSet<Userlogintype> Userlogintypes { get; set; }
 
     public virtual DbSet<Userrole> Userroles { get; set; }
+
+    public virtual DbSet<VwTotaldevice> VwTotaldevices { get; set; }
+
+    public virtual DbSet<VwTotaldevice2> VwTotaldevice2s { get; set; }
 
     public virtual DbSet<Ward> Wards { get; set; }
 
@@ -456,6 +460,8 @@ public partial class ferrodbContext : DbContext
 
             entity.ToTable("device");
 
+            entity.HasIndex(e => e.Devicetypeid, "devicetype_index");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Devicetypeid).HasColumnName("devicetypeid");
             entity.Property(e => e.Imie)
@@ -540,6 +546,8 @@ public partial class ferrodbContext : DbContext
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("deviceinstallation");
+
+            entity.HasIndex(e => e.EntityId, "idx_entityid");
 
             entity.Property(e => e.ApproverPersonId).HasColumnName("approverPersonId");
             entity.Property(e => e.Image).HasMaxLength(100);
@@ -705,26 +713,6 @@ public partial class ferrodbContext : DbContext
             entity.Property(e => e.Addressid).HasColumnName("addressid");
             entity.Property(e => e.Addresstype).HasColumnName("addresstype");
             entity.Property(e => e.Entityid).HasColumnName("entityid");
-        });
-
-        modelBuilder.Entity<Entityaddressview>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("entityaddressview");
-
-            entity.Property(e => e.AddressTypeName).HasMaxLength(100);
-            entity.Property(e => e.Addressline1).HasMaxLength(256);
-            entity.Property(e => e.Addressline2).HasMaxLength(256);
-            entity.Property(e => e.CityName).HasMaxLength(45);
-            entity.Property(e => e.CountryName).HasMaxLength(50);
-            entity.Property(e => e.Latitude).HasMaxLength(50);
-            entity.Property(e => e.Longitude).HasMaxLength(50);
-            entity.Property(e => e.Pincode).HasMaxLength(15);
-            entity.Property(e => e.RegionName).HasMaxLength(45);
-            entity.Property(e => e.Remarks).HasColumnType("text");
-            entity.Property(e => e.StateName).HasMaxLength(100);
-            entity.Property(e => e.WardName).HasMaxLength(100);
         });
 
         modelBuilder.Entity<Entityrelationship>(entity =>
@@ -957,6 +945,34 @@ public partial class ferrodbContext : DbContext
             entity.Property(e => e.Remarks).HasColumnType("text");
         });
 
+        modelBuilder.Entity<Organisation>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("organisation");
+
+            entity.HasIndex(e => e.OrgRoleId, "fk_roleid");
+
+            entity.HasIndex(e => e.OrgTypeId, "fk_typeId");
+
+            entity.Property(e => e.LongName).HasMaxLength(256);
+            entity.Property(e => e.Name).HasMaxLength(256);
+            entity.Property(e => e.Remarks)
+                .HasColumnType("text")
+                .HasColumnName("remarks");
+            entity.Property(e => e.ShortName).HasMaxLength(256);
+            entity.Property(e => e.TradeName).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<Organisationaddress>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("organisationaddress");
+
+            entity.Property(e => e.Addresstype).HasColumnName("addresstype");
+        });
+
         modelBuilder.Entity<Person>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
@@ -990,17 +1006,6 @@ public partial class ferrodbContext : DbContext
             entity.Property(e => e.Remarks)
                 .HasColumnType("text")
                 .HasColumnName("remarks");
-        });
-
-        modelBuilder.Entity<Rdlocation>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PRIMARY");
-
-            entity.ToTable("rdlocations");
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Locationid).HasColumnName("locationid");
-            entity.Property(e => e.RdId).HasColumnName("rdId");
         });
 
         modelBuilder.Entity<Region>(entity =>
@@ -1102,6 +1107,107 @@ public partial class ferrodbContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.RoleType).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<VwTotaldevice>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("vw_totaldevice");
+
+            entity.Property(e => e.Addressline1).HasMaxLength(256);
+            entity.Property(e => e.Addressline2)
+                .HasMaxLength(256)
+                .HasColumnName("addressline2");
+            entity.Property(e => e.AssetId).HasColumnType("mediumtext");
+            entity.Property(e => e.DeviceId).HasColumnName("Device Id");
+            entity.Property(e => e.DeviceType).HasMaxLength(40);
+            entity.Property(e => e.Devicetypeid).HasColumnName("devicetypeid");
+            entity.Property(e => e.Entityid).HasColumnName("entityid");
+            entity.Property(e => e.Imie)
+                .HasMaxLength(45)
+                .HasColumnName("imie");
+            entity.Property(e => e.InstallationDate).HasColumnType("datetime");
+            entity.Property(e => e.Latitude)
+                .HasMaxLength(50)
+                .HasColumnName("latitude");
+            entity.Property(e => e.Longitude)
+                .HasMaxLength(50)
+                .HasColumnName("longitude");
+            entity.Property(e => e.MaxSever)
+                .HasPrecision(10, 2)
+                .HasColumnName("Max_sever");
+            entity.Property(e => e.MaxValue)
+                .HasPrecision(10, 2)
+                .HasColumnName("Max_Value");
+            entity.Property(e => e.MinValue).HasPrecision(10, 2);
+            entity.Property(e => e.MobileNumber).HasMaxLength(45);
+            entity.Property(e => e.Name).HasMaxLength(256);
+            entity.Property(e => e.OrgCode).HasMaxLength(256);
+            entity.Property(e => e.OrgName).HasMaxLength(256);
+            entity.Property(e => e.Person)
+                .HasMaxLength(146)
+                .HasColumnName("person");
+            entity.Property(e => e.RegionName).HasMaxLength(45);
+            entity.Property(e => e.StateName).HasMaxLength(100);
+            entity.Property(e => e.WardId).HasColumnName("Ward_Id");
+            entity.Property(e => e.WardName)
+                .HasMaxLength(100)
+                .HasColumnName("Ward_Name");
+            entity.Property(e => e.ZoneId).HasColumnName("zoneId");
+            entity.Property(e => e.Zonename)
+                .HasMaxLength(45)
+                .HasColumnName("zonename");
+        });
+
+        modelBuilder.Entity<VwTotaldevice2>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("vw_totaldevice2");
+
+            entity.Property(e => e.Addressline1).HasMaxLength(256);
+            entity.Property(e => e.Addressline2)
+                .HasMaxLength(256)
+                .HasColumnName("addressline2");
+            entity.Property(e => e.AssetId).HasColumnType("mediumtext");
+            entity.Property(e => e.DeviceId).HasColumnName("Device Id");
+            entity.Property(e => e.DeviceType).HasMaxLength(40);
+            entity.Property(e => e.Devicetypeid).HasColumnName("devicetypeid");
+            entity.Property(e => e.Entityid).HasColumnName("entityid");
+            entity.Property(e => e.Imie)
+                .HasMaxLength(45)
+                .HasColumnName("imie");
+            entity.Property(e => e.InstallationDate).HasColumnType("datetime");
+            entity.Property(e => e.Latitude)
+                .HasMaxLength(50)
+                .HasColumnName("latitude");
+            entity.Property(e => e.Longitude)
+                .HasMaxLength(50)
+                .HasColumnName("longitude");
+            entity.Property(e => e.MaxSever)
+                .HasPrecision(10, 2)
+                .HasColumnName("Max_sever");
+            entity.Property(e => e.MaxValue)
+                .HasPrecision(10, 2)
+                .HasColumnName("Max_Value");
+            entity.Property(e => e.MinValue).HasPrecision(10, 2);
+            entity.Property(e => e.MobileNumber).HasMaxLength(45);
+            entity.Property(e => e.Name).HasMaxLength(256);
+            entity.Property(e => e.OrgCode).HasMaxLength(256);
+            entity.Property(e => e.OrgName).HasMaxLength(256);
+            entity.Property(e => e.Person)
+                .HasMaxLength(146)
+                .HasColumnName("person");
+            entity.Property(e => e.StateName).HasMaxLength(100);
+            entity.Property(e => e.WardId).HasColumnName("Ward_Id");
+            entity.Property(e => e.WardName)
+                .HasMaxLength(100)
+                .HasColumnName("Ward_Name");
+            entity.Property(e => e.ZoneId).HasColumnName("zoneId");
+            entity.Property(e => e.Zonename)
+                .HasMaxLength(45)
+                .HasColumnName("zonename");
         });
 
         modelBuilder.Entity<Ward>(entity =>

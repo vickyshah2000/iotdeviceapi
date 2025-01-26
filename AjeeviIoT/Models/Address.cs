@@ -38,7 +38,7 @@ public partial class Address
     public virtual Country Country { get; set; }
 
     public virtual Region Region { get; set; }
+    public virtual Ward Ward { get; set; }
 
     public virtual State State { get; set; }
-    public virtual Ward Ward { get; set; }
 }
