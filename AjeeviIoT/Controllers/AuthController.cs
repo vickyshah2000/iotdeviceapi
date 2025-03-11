@@ -35,7 +35,7 @@ namespace AjeeviIoT.Controllers
                 return BadRequest("Invalid user request!!!");
             }
 
-            var rData = _ferrodbContext.UserLogins.Where(w=>w.Email==user.UserName && w.Password==user.Password)?.FirstOrDefault();
+            var rData = _ferrodbContext.UserLogins.Where(w => w.Email == user.UserName && w.Password == user.Password)?.FirstOrDefault();
 
             if (rData == null)
             {
@@ -48,23 +48,35 @@ namespace AjeeviIoT.Controllers
             var tokeOptions = new JwtSecurityToken(issuer: _configuration["JwtSettings:Issuer"], audience: _configuration["JwtSettings:Audience"],
             claims: new List<Claim>(), expires: DateTime.Now.AddDays(30), signingCredentials: signinCredentials);
             string tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
-           
+
+            //var ccData = _ferrodbContext.Deviceinstallations.Where(d => d.EntityId == rData.EntityId).Select(d => d.DeviceId).ToArray();
+
+            //List<int> deviceTypeIds = new List<int>();
+            //foreach (var c in ccData)
+            //{
+            //    int dtId = (int)_ferrodbContext.Devices.Where(w => w.Id == c).FirstOrDefault().Devicetypeid;
+            //    if (dtId != null && dtId > 0)
+            //    {
+            //        deviceTypeIds.Add(dtId);
+            //    }
+            //}
+
+
             return Ok(new
             {
                 access = tokenString,
                 msg = "Login Successfully...",
-                role = _ferrodbContext.Userroles.Where(w=>w.Id==rData.UserroleId)?.FirstOrDefault()?.RoleType,
-                //role = "Customer",
+                role = _ferrodbContext.Userroles.Where(w => w.Id == rData.UserroleId)?.FirstOrDefault()?.RoleType,
                 entity_id = new
                 {
                     id = rData.UserId,
                     user_name = rData.UserFname,
                     entity_id = rData.EntityId,
-                    //deviceTypeId = new
-                    //{
-                        //totalDeviceTypeId = _ferrodbContext.Deviceinstallations.Where(d => d.EntityId)
-                    //}
+                    images = _ferrodbContext.Imagedetails.Where(i => i.ImageTypeId == rData.EntityId)?.FirstOrDefault()?.Imageurl,
+                   // deviceTypeId = deviceTypeIds.Distinct()
+
                 }
+
             });
 
             //return Ok(new LoginModel

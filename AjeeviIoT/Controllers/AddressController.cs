@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace AjeeviIoT.Controllers
@@ -118,7 +119,7 @@ namespace AjeeviIoT.Controllers
 
 
         [HttpPost("CreateAddress")]
-        public async Task<IActionResult> CreateAddress([FromBody] CreateAddressDTO newAddressDTO)
+        public async Task<IActionResult> CreateAddress([FromBody] CreateAddressDTO newAddressDTO, int OrgId, int AddressTypeId)
         {
             if (newAddressDTO == null || string.IsNullOrEmpty(newAddressDTO.Addressline1) || string.IsNullOrEmpty(newAddressDTO.Pincode))
             {
@@ -140,6 +141,17 @@ namespace AjeeviIoT.Controllers
 
             _ferrodbContext.Addresses.Add(newAddress);
             await _ferrodbContext.SaveChangesAsync();
+
+            var organisationAddress = new Organisationaddress
+            {
+                OrgId = OrgId,
+                AddressId = newAddress.Id,
+                Addresstype = AddressTypeId
+            };
+
+            _ferrodbContext.Organisationaddresses.Add(organisationAddress);
+            await _ferrodbContext.SaveChangesAsync();
+
 
             return CreatedAtAction(nameof(GetAddressById), new { id = newAddress.Id }, newAddress);
         }
