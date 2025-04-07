@@ -19,7 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 //builder.Services.Configure<FormOptions>(options =>
 //{
-//    options.MultipartBodyLengthLimit = 52428800; // 50 MB
+//    options.MultipartBodyLengthLimit = 52428800; // 5000 MB
 //});
 
 //builder.Services.AddCors(options =>
